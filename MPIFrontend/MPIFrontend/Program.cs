@@ -1,7 +1,14 @@
+using MPIFrontend.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+builder.Services.AddHttpClient("PythonApi", client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration["PythonApi:BaseUrl"]);
+});
+builder.Services.AddScoped<GameService>();
 
 var app = builder.Build();
 

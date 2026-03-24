@@ -1,20 +1,23 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using MPIFrontend.Models;
+using MPIFrontend.Services;
 
 namespace MPIFrontend.Pages
 {
     public class IndexModel : PageModel
     {
-        private readonly ILogger<IndexModel> _logger;
+        private readonly GameService _gameService;
+        public List<Game> Games { get; set; } = new List<Game>();
 
-        public IndexModel(ILogger<IndexModel> logger)
+        public IndexModel(GameService gameService)
         {
-            _logger = logger;
+            _gameService = gameService;
         }
 
-        public void OnGet()
+        public async Task OnGetAsync()
         {
-
+            Games = await _gameService.GetGamesAsync();
         }
     }
 }

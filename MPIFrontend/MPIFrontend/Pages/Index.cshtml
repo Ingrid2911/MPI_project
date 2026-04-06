@@ -3,22 +3,15 @@
 
 <h1>Games</h1>
 
-<table>
-    <tr>
-        <th>Title</th>
-        <th>Year</th>
-        <th>Genre</th>
-        <th>Rating</th>
-        <th>Description</th>
-    </tr>
-    @foreach (var game in Model.Games)
-    {
-        <tr>
-            <td>@game.Title</td>
-            <td>@game.Year</td>
-            <td>@game.Genre</td>
-            <td>@game.Rating</td>
-            <td>@game.Description</td>
-        </tr>
-    }
-</table>
+@foreach (var game in Model.Games)
+{
+    <div class="game-capsule">
+        <div class="game-capsule-left">
+            <span class="game-rating">⭐ @game.Rating</span>
+            <span class="game-title">@game.Title</span>
+        </div>
+        <a class="btn-green" asp-page="/Details" asp-route-id="@game.Id">View</a>
+    </div>
+}
+
+<a class="btn-green-filled" asp-page="/AddGame">+ Add Game</a>

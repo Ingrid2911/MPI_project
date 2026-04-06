@@ -1,4 +1,4 @@
-# MPIFrontend
+# MPI_project
 
 A C# ASP.NET Core Razor Pages frontend that connects to a Python FastAPI backend serving a games database.
 
@@ -49,7 +49,7 @@ You should see `Succes!` printed in the terminal. This only needs to be done onc
 In the same backend folder, run:
 
 ```bash
-uvicorn main:app --reload
+python -m uvicorn main:app --reload
 ```
 
 The API will be available at `http://localhost:8000`. You can verify it is running by visiting:

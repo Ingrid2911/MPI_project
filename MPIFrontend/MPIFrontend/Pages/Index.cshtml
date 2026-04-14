@@ -1,0 +1,17 @@
+﻿@page
+@model IndexModel
+
+<h1>Games</h1>
+
+@foreach (var game in Model.Games)
+{
+    <div class="game-capsule">
+        <div class="game-capsule-left">
+            <span class="game-rating">⭐ @game.Rating</span>
+            <span class="game-title">@game.Title</span>
+        </div>
+        <a class="btn-green" asp-page="/Details" asp-route-id="@game.Id">View</a>
+    </div>
+}
+
+<a class="btn-green-filled" asp-page="/AddGame">+ Add Game</a>

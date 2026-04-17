@@ -3,6 +3,7 @@ from main import app, collection
 
 client = TestClient(app)
 
+# Runs before each test to clean the database
 def setup_function():
     collection.delete_many({})
 
@@ -17,7 +18,7 @@ def test_create_valid_game():
         "year": 2015,
         "genre": "RPG",
         "rating": 9.8,
-        "description": "Un joc legendar."
+        "description": "A legendary game."
     }
     response = client.post("/api/games", json=game_data)
     assert response.status_code == 201
@@ -29,8 +30,8 @@ def test_create_game_invalid_rating():
         "title": "Cyberpunk 2077",
         "year": 2020,
         "genre": "RPG",
-        "rating": 15.0, 
-        "description": "Rating prea mare."
+        "rating": 15.0, # Rating is too high (max is 10)
+        "description": "Rating is above limits."
     }
     response = client.post("/api/games", json=game_data)
     assert response.status_code == 422 # Unprocessable Entity
@@ -40,13 +41,20 @@ def test_create_game_missing_title():
         "year": 2022,
         "genre": "Action",
         "rating": 8.5,
-        "description": "Fara titlu"
+        "description": "Missing title field."
     }
     response = client.post("/api/games", json=game_data)
     assert response.status_code == 422
 
 def test_get_all_games():
-    client.post("/api/games", json={"title": "GTA V", "year": 2013, "genre": "Action", "rating": 9.5, "description": "Auto"})
+    # Insert a game first to have something to retrieve
+    client.post("/api/games", json={
+        "title": "GTA V", 
+        "year": 2013, 
+        "genre": "Action", 
+        "rating": 9.5, 
+        "description": "Auto theft."
+    })
     
     response = client.get("/api/games")
     assert response.status_code == 200

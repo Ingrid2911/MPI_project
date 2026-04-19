@@ -16,6 +16,7 @@ client = MongoClient(MONGO_URI)
 db = client["games_db"]
 collection = db["games"]
 
+
 class GameModel(BaseModel):
     title: str = Field(..., min_length=1, description="Game title")
     year: int = Field(..., gt=1950, description="Release year")
@@ -23,12 +24,15 @@ class GameModel(BaseModel):
     rating: float = Field(..., ge=0, le=10, description="Rating from 0 to 10")
     description: str
 
+
 class GameResponse(GameModel):
     id: str
+
 
 @app.get("/")
 def read_root():
     return {"message": "Welcome to the Games API!"}
+
 
 @app.post("/api/games", response_model=GameResponse, status_code=status.HTTP_201_CREATED)
 def create_game(game: GameModel):
@@ -38,6 +42,7 @@ def create_game(game: GameModel):
     created_game = {**game_dict, "id": str(result.inserted_id)}
     return created_game
 
+
 @app.get("/api/games", response_model=List[GameResponse])
 def get_games():
     games = []
@@ -46,16 +51,18 @@ def get_games():
         games.append(game_data)
     return games
 
+
 @app.get("/api/games/{game_id}", response_model=GameResponse)
 def get_game(game_id: str):
     try:
         game = collection.find_one({"_id": ObjectId(game_id)})
     except:
         raise HTTPException(status_code=400, detail="Invalid ID format")
-        
+
     if game is None:
         raise HTTPException(status_code=404, detail="Game not found")
     return {**game, "id": str(game["_id"])}
+
 
 @app.put("/api/games/{game_id}", response_model=GameResponse)
 def update_game(game_id: str, game: GameModel):
@@ -64,11 +71,12 @@ def update_game(game_id: str, game: GameModel):
         result = collection.update_one({"_id": ObjectId(game_id)}, {"$set": updated_data})
     except:
         raise HTTPException(status_code=400, detail="Invalid ID format")
-        
+
     if result.matched_count == 0:
         raise HTTPException(status_code=404, detail="Game not found")
-        
+
     return {**updated_data, "id": game_id}
+
 
 @app.delete("/api/games/{game_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_game(game_id: str):
@@ -76,10 +84,11 @@ def delete_game(game_id: str):
         result = collection.delete_one({"_id": ObjectId(game_id)})
     except:
         raise HTTPException(status_code=400, detail="Invalid ID format")
-        
+
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Game not found")
     return None
+
 
 if __name__ == "__main__":
     print("Successfully connected to MongoDB! Starting the server...")

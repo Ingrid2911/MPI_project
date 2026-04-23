@@ -19,5 +19,15 @@ services:
     environment:
       - MONGO_URI=mongodb://mongodb:27017
 
+  frontend:
+    build: ./MPIFrontend/MPIFrontend
+    container_name: mpi_frontend
+    ports:
+      - "8080:8080"
+    depends_on:
+      - backend
+    environment:
+      - PythonApi__BaseUrl=http://backend:8000
+
 volumes:
   mongodb_data:

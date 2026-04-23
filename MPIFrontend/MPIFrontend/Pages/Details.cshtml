@@ -1,0 +1,21 @@
+﻿@page "{id}"
+@model MPIFrontend.Pages.DetailsModel
+
+<a class="btn-green" asp-page="/Index">← Back</a>
+
+<h1 style="margin-top: 1.5rem;">@Model.Game.Title</h1>
+
+<div class="game-capsule" style="flex-direction: column; align-items: flex-start; gap: 0.75rem; margin-top: 1rem;">
+    <div style="display: flex; gap: 1rem; align-items: center;">
+        <span class="game-rating">⭐ @Model.Game.Rating</span>
+        <span style="color: var(--muted); font-size: 0.85rem;">@Model.Game.Genre · @Model.Game.Year</span>
+    </div>
+    <p style="color: var(--text); line-height: 1.7;">@Model.Game.Description</p>
+</div>
+
+<div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+    <a class="btn-green" asp-page="/EditGame" asp-route-id="@Model.Game.Id">Edit</a>
+    <form method="post">
+        <button type="submit" class="btn-red">Delete</button>
+    </form>
+</div>

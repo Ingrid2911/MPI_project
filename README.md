@@ -90,8 +90,48 @@ or
 
 ---
 
-## TODO: Project Structure
+## Project Structure
 
+```
+MPI_project/
+├── .gitignore
+├── README.md
+├── docker-compose.yml        # Setup for MongoDB, backend and frontend containers
+├── backend/
+│   ├── Dockerfile            # Docker image for the Python backend
+│   ├── main.py               # FastAPI app; defines all API endpoints
+|   ├── pytest                # Empty test file
+|   ├── requirements.txt      # Contains all necessary Python libraries in order to run the backend
+│   ├── seed.py               # One-time script to populate the database with sample data
+│   └── test_main.py          # Automated tests for the API
+└── MPIFrontend/
+    └── MPIFrontend/
+        ├── Dockerfile                # Docker image for the C# frontend
+        ├── Models/
+        │   └── Game.cs               # C# model matching the API response
+        ├── Pages/
+        │   ├── Shared/
+        │   │   └── _Layout.cshtml    # Shared navbar and footer layout
+        │   ├── Index.cshtml          # Home page — lists all games
+        │   ├── Index.cshtml.cs       # Fetches games list from GameService
+        │   ├── Details.cshtml        # Game details page with Edit and Delete buttons
+        │   ├── Details.cshtml.cs     # Fetches single game, handles delete
+        │   ├── AddGame.cshtml        # Form to add a new game
+        │   ├── AddGame.cshtml.cs     # Handles POST to create a new game
+        │   ├── EditGame.cshtml       # Form to edit an existing game, pre-filled
+        │   ├── EditGame.cshtml.cs    # Fetches game data, handles PUT update
+        │   ├── About.cshtml          # Project info and team roles
+        │   └── About.cshtml.cs
+        ├── Services/
+        │   └── GameService.cs        # Handles all HTTP calls to the Python API
+        ├── wwwroot/
+        │   ├── css/
+        │   │   └── site.css          # Styling
+        │   └── images/
+        │       └── imdb_logo.png     # Navbar logo
+        ├── appsettings.json          # Configuration including Python API base URL
+        └── Program.cs                # App entry point
+```
 ---
 
 ## API Endpoints
@@ -102,4 +142,9 @@ The Python FastAPI backend exposes the following endpoints:
 |--------|-----|-------------|
 | GET | `/` | Health check |
 | GET | `/api/games` | Returns all games |
+| GET | `/api/games/{id}` | Returns a single game by ID |
 | POST | `/api/games` | Creates a new game |
+| PUT | `/api/games/{id}` | Updates an existing game |
+| DELETE | `/api/games/{id}` | Deletes a game |
+
+## TODO: Add support for running with Docker (needs Linux)

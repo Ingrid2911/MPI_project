@@ -75,3 +75,18 @@ def test_delete_game():
 
     response = client.delete(f"/api/games/{game_id}")
     assert response.status_code == 204
+
+def test_get_game_by_id():
+    create_response = client.post("/api/games", json={
+        "title": "ID Test",
+        "year": 2023,
+        "genre": "Adventure",
+        "rating": 9.0,
+        "description": "Find me"
+    })
+
+    game_id = create_response.json()["id"]
+
+    response = client.get(f"/api/games/{game_id}")
+    assert response.status_code == 200
+    assert response.json()["title"] == "ID Test"

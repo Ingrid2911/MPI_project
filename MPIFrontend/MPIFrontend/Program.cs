@@ -20,7 +20,7 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection(); // DO NOT uncomment this line on Linux!
 app.UseStaticFiles();
 
 app.UseRouting();

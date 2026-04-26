@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   mongodb:
     image: mongo:latest
@@ -8,16 +6,27 @@ services:
       - "27017:27017"
     volumes:
       - mongodb_data:/data/db
+    networks:
+      - mpi_network
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 
   backend:
-    build: .
+    build: ./backend
     container_name: mpi_backend
     ports:
       - "8000:8000"
     depends_on:
-      - mongodb
+      mongodb:
+        condition: service_healthy
     environment:
       - MONGO_URI=mongodb://mongodb:27017
+    networks:
+      - mpi_network
 
   frontend:
     build: ./MPIFrontend/MPIFrontend
@@ -28,6 +37,13 @@ services:
       - backend
     environment:
       - PythonApi__BaseUrl=http://backend:8000
+      - ASPNETCORE_ENVIRONMENT=Development
+    networks:
+      - mpi_network
 
 volumes:
   mongodb_data:
+
+networks:
+  mpi_network:
+    driver: bridge

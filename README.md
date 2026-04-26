@@ -6,6 +6,7 @@ A C# ASP.NET Core Razor Pages frontend that connects to a Python FastAPI backend
 
 ## Prerequisites
 
+### Running manually (Windows)
 Make sure the following are installed on your machine before proceeding:
 
 - [.NET 8.0 SDK](https://dotnet.microsoft.com/download)
@@ -18,11 +19,17 @@ Make sure the following are installed on your machine before proceeding:
 pip install fastapi uvicorn pymongo python-dotenv
 ```
 
+### Running with Docker (Linux)
+- [Docker Engine](https://docs.docker.com/engine/install/)
+- [Docker Compose plugin](https://docs.docker.com/compose/install/)
+
 ---
 
 ## Running the Project
 
-### Step 1 — Start MongoDB
+### Option A — Manual (Windows)
+
+#### Step 1 — Start MongoDB
 
 Open a terminal as Administrator and run:
 
@@ -30,9 +37,7 @@ Open a terminal as Administrator and run:
 net start MongoDB
 ```
 
----
-
-### Step 2 — Seed the Database (first time only)
+#### Step 2 — Seed the Database (first time only)
 
 Navigate to the Python backend folder and run:
 
@@ -42,9 +47,7 @@ python seed.py
 
 You should see `Succes!` printed in the terminal. This only needs to be done once — it populates the database with initial game data.
 
----
-
-### Step 3 — Start the Python Backend
+#### Step 3 — Start the Python Backend
 
 In the same backend folder, run:
 
@@ -57,9 +60,7 @@ The API will be available at `http://localhost:8000`. You can verify it is runni
 - `http://localhost:8000` — welcome message
 - `http://localhost:8000/docs` — interactive Swagger UI
 
----
-
-### Step 4 — Run the C# Frontend
+#### Step 4 — Run the C# Frontend
 
 Open `MPIFrontend.sln` in Visual Studio 2022 and press **F5** to build and launch the application. It will open automatically in your browser.
 
@@ -67,26 +68,98 @@ Open `MPIFrontend.sln` in Visual Studio 2022 and press **F5** to build and launc
 
 ---
 
+### Option B — Docker (Linux)
+
+#### Step 1 — Install Docker
+
+```bash
+sudo apt update
+sudo apt install -y ca-certificates curl gnupg
+sudo install -m 0755 -d /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+sudo chmod a+r /etc/apt/keyrings/docker.gpg
+
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+sudo apt update
+sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+```
+
+Optionally, allow running Docker without sudo:
+
+```bash
+sudo usermod -aG docker $USER
+newgrp docker
+```
+
+#### Step 2 — Start the stack
+
+From the root of the project (where `docker-compose.yml` lives):
+
+```bash
+docker compose up --build
+```
+
+This starts all three services in the correct order: MongoDB → Backend → Frontend.
+
+- Frontend: `http://localhost:8080`
+- Backend: `http://localhost:8000`
+
+#### Step 3 — Seed the Database (first time only)
+
+Once all containers are running, open a second terminal and run:
+
+```bash
+docker exec mpi_backend python seed.py
+```
+
+You should see `Succes!` printed. Refresh the frontend and the games will appear.
+
+#### Stopping the stack
+
+```bash
+docker compose down
+```
+
+---
+
 ## Troubleshooting
 
-### Windows Smart App Control blocking the executable
+### Windows — Smart App Control blocking the executable
 
-On Windows 11, Smart App Control may block the locally built executable with a message like:
+On Windows 11, Smart App Control may block the locally built executable. To fix this:
 
-> *"An Application Control policy has blocked this file"*
+1. Search for **Smart App Control** in the Windows search bar
+2. Set it to **Off**
+3. Restart Visual Studio and press F5 again
 
-or
+---
 
-> *"Part of this app has been blocked"*
+### Linux/Docker — MongoDB requires AVX support
 
-**To fix this:**
+If MongoDB fails to start with a message about AVX support, your CPU does not support it. Use MongoDB 4.4 instead by changing the image in `docker-compose.yml`:
 
-1. Open the Windows search bar and search for **Smart App Control**
-2. Click on **Smart App Control settings**
-3. Set Smart App Control to **Off**
-4. Restart Visual Studio and press F5 again
+```yaml
+mongodb:
+  image: mongo:4.4
+```
+..and on this line, change "mongosh" to just "mongo":
 
-> This is safe to do on a personal development machine. Smart App Control is enabled by default on fresh Windows 11 installs and commonly blocks locally built executables that are not code-signed.
+```yaml
+healthcheck:
+    test: ["CMD", "mongo", "--eval", "db.adminCommand('ping')"]
+```
+---
+
+### Linux/Docker — Containers can't reach each other
+
+If the backend logs show `Temporary failure in name resolution`, make sure all three services have the `networks` block in `docker-compose.yml` and that the `mpi_network` bridge network is defined at the bottom. Then run:
+
+```bash
+docker compose down -v
+docker network prune -f
+docker compose up --build
+```
 
 ---
 
@@ -132,6 +205,7 @@ MPI_project/
         ├── appsettings.json          # Configuration including Python API base URL
         └── Program.cs                # App entry point
 ```
+
 ---
 
 ## API Endpoints
@@ -146,5 +220,3 @@ The Python FastAPI backend exposes the following endpoints:
 | POST | `/api/games` | Creates a new game |
 | PUT | `/api/games/{id}` | Updates an existing game |
 | DELETE | `/api/games/{id}` | Deletes a game |
-
-## TODO: Add support for running with Docker (needs Linux)

@@ -61,3 +61,17 @@ def test_get_all_games():
     assert isinstance(response.json(), list)
     assert len(response.json()) == 1
     assert response.json()[0]["title"] == "GTA V"
+
+def test_delete_game():
+    create_response = client.post("/api/games", json={
+        "title": "Delete Test",
+        "year": 2023,
+        "genre": "Test",
+        "rating": 8.0,
+        "description": "Delete me"
+    })
+
+    game_id = create_response.json()["id"]
+
+    response = client.delete(f"/api/games/{game_id}")
+    assert response.status_code == 204

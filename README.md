@@ -1,18 +1,58 @@
-# MPI_project
+# Games IMDB
 
-A C# ASP.NET Core Razor Pages frontend that connects to a Python FastAPI backend serving a games database.
+> Platformă de rating al jocurilor pe calculator, destinată evaluării, descoperirii și ierarhizării celor mai populare titluri pentru gameri.
 
 ---
 
+# 1. Descriere și Obiective
+
+Games IMDB este o aplicație full-stack care permite utilizatorilor să vizualizeze, adauge, editeze și gestioneze jocuri video într-o bază de date centralizată.
+
+### Problema rezolvată:
+
+* Ierarhizarea jocurilor pe calculator
+* Organizarea informațiilor despre jocuri într-un sistem accesibil
+* Oferirea unei platforme pentru evaluare și administrare
+
+### Public țintă:
+
+* Gameri
+* Copii
+* Adolescenți
+
+---
+
+# 2. Echipa și Roluri
+
+| Nume Student    | Rol Principal      | GitHub Username  |
+| --------------- | ------------------ | ---------------- |
+| Negru Cosmin    | Backend Developer  | @cnegru38        |
+| Răuțoiu Marco   | DevOps Engineer    | @RautoiuMarco    |
+| Mihăiță Ingrid  | QA Engineer        | @Ingrid2911      |
+| Popîrdă Eusebiu | Frontend Developer | @popardasebi3490 |
+
+---
+
+# 3. Arhitectura și Tehnologii
+
+* **Backend:** Python FastAPI
+* **Frontend:** C# ASP.NET Core Razor Pages
+* **Database:** MongoDB
+
+---
+
+# 4. Setup Local (Cum rulăm proiectul)
+
 ## Prerequisites
 
-Make sure the following are installed on your machine before proceeding:
+Asigură-te că ai instalat următoarele:
 
-- [.NET 8.0 SDK](https://dotnet.microsoft.com/download)
-- [Python 3.x](https://www.python.org/downloads/)
-- ⚠️ [MongoDB Community Edition](https://www.mongodb.com/try/download/community)
-- [Visual Studio 2022](https://visualstudio.microsoft.com/)
-- Python dependencies (from the backend folder):
+* [.NET 8.0 SDK](https://dotnet.microsoft.com/download)
+* [Python 3.x](https://www.python.org/downloads/)
+* [MongoDB Community Edition](https://www.mongodb.com/try/download/community)
+* [Visual Studio 2022](https://visualstudio.microsoft.com/)
+
+### Python dependencies:
 
 ```bash
 pip install fastapi uvicorn pymongo python-dotenv
@@ -20,11 +60,9 @@ pip install fastapi uvicorn pymongo python-dotenv
 
 ---
 
-## Running the Project
+## Step 1 — Start MongoDB
 
-### Step 1 — Start MongoDB
-
-Open a terminal as Administrator and run:
+Deschide terminalul ca Administrator:
 
 ```bash
 net start MongoDB
@@ -32,119 +70,99 @@ net start MongoDB
 
 ---
 
-### Step 2 — Seed the Database (first time only)
+## Step 2 — Seed the Database (prima rulare)
 
-Navigate to the Python backend folder and run:
+Navighează în folderul backend:
 
 ```bash
 python seed.py
 ```
 
-You should see `Succes!` printed in the terminal. This only needs to be done once — it populates the database with initial game data.
-
 ---
 
-### Step 3 — Start the Python Backend
-
-In the same backend folder, run:
+## Step 3 — Start Backend API
 
 ```bash
 python -m uvicorn main:app --reload
 ```
 
-The API will be available at `http://localhost:8000`. You can verify it is running by visiting:
+### API disponibil la:
 
-- `http://localhost:8000` — welcome message
-- `http://localhost:8000/docs` — interactive Swagger UI
-
----
-
-### Step 4 — Run the C# Frontend
-
-Open `MPIFrontend.sln` in Visual Studio 2022 and press **F5** to build and launch the application. It will open automatically in your browser.
-
-> Make sure MongoDB and the Python backend are running **before** launching the frontend, otherwise the games list will be empty.
+* `http://localhost:8000`
+* `http://localhost:8000/docs`
 
 ---
 
-## Troubleshooting
+## Step 4 — Start Frontend
 
-### Windows Smart App Control blocking the executable
+Deschide `MPIFrontend.sln` în Visual Studio 2022 și apasă:
 
-On Windows 11, Smart App Control may block the locally built executable with a message like:
-
-> *"An Application Control policy has blocked this file"*
-
-or
-
-> *"Part of this app has been blocked"*
-
-**To fix this:**
-
-1. Open the Windows search bar and search for **Smart App Control**
-2. Click on **Smart App Control settings**
-3. Set Smart App Control to **Off**
-4. Restart Visual Studio and press F5 again
-
-> This is safe to do on a personal development machine. Smart App Control is enabled by default on fresh Windows 11 installs and commonly blocks locally built executables that are not code-signed.
-
----
-
-## Project Structure
-
+```bash
+F5
 ```
+
+---
+
+## Important:
+
+MongoDB și backend-ul trebuie să ruleze înainte de frontend.
+
+---
+
+# Troubleshooting
+
+## Windows Smart App Control
+
+Dacă aplicația este blocată:
+
+1. Caută **Smart App Control**
+2. Deschide setările
+3. Setează pe **Off**
+4. Repornește Visual Studio
+
+---
+
+# Project Structure
+
+```plaintext
 MPI_project/
 ├── .gitignore
 ├── README.md
-├── docker-compose.yml        # Setup for MongoDB, backend and frontend containers
+├── docker-compose.yml
 ├── backend/
-│   ├── Dockerfile            # Docker image for the Python backend
-│   ├── main.py               # FastAPI app; defines all API endpoints
-|   ├── pytest                # Empty test file
-|   ├── requirements.txt      # Contains all necessary Python libraries in order to run the backend
-│   ├── seed.py               # One-time script to populate the database with sample data
-│   └── test_main.py          # Automated tests for the API
+│   ├── Dockerfile
+│   ├── main.py
+│   ├── pytest
+│   ├── requirements.txt
+│   ├── seed.py
+│   └── test_main.py
 └── MPIFrontend/
     └── MPIFrontend/
-        ├── Dockerfile                # Docker image for the C# frontend
+        ├── Dockerfile
         ├── Models/
-        │   └── Game.cs               # C# model matching the API response
         ├── Pages/
-        │   ├── Shared/
-        │   │   └── _Layout.cshtml    # Shared navbar and footer layout
-        │   ├── Index.cshtml          # Home page — lists all games
-        │   ├── Index.cshtml.cs       # Fetches games list from GameService
-        │   ├── Details.cshtml        # Game details page with Edit and Delete buttons
-        │   ├── Details.cshtml.cs     # Fetches single game, handles delete
-        │   ├── AddGame.cshtml        # Form to add a new game
-        │   ├── AddGame.cshtml.cs     # Handles POST to create a new game
-        │   ├── EditGame.cshtml       # Form to edit an existing game, pre-filled
-        │   ├── EditGame.cshtml.cs    # Fetches game data, handles PUT update
-        │   ├── About.cshtml          # Project info and team roles
-        │   └── About.cshtml.cs
         ├── Services/
-        │   └── GameService.cs        # Handles all HTTP calls to the Python API
         ├── wwwroot/
-        │   ├── css/
-        │   │   └── site.css          # Styling
-        │   └── images/
-        │       └── imdb_logo.png     # Navbar logo
-        ├── appsettings.json          # Configuration including Python API base URL
-        └── Program.cs                # App entry point
+        ├── appsettings.json
+        └── Program.cs
 ```
+
 ---
 
-## API Endpoints
+# API Endpoints
 
-The Python FastAPI backend exposes the following endpoints:
+| Method | URL               | Description                 |
+| ------ | ----------------- | --------------------------- |
+| GET    | `/`               | Health check                |
+| GET    | `/api/games`      | Returns all games           |
+| GET    | `/api/games/{id}` | Returns a single game by ID |
+| POST   | `/api/games`      | Creates a new game          |
+| PUT    | `/api/games/{id}` | Updates an existing game    |
+| DELETE | `/api/games/{id}` | Deletes a game              |
 
-| Method | URL | Description |
-|--------|-----|-------------|
-| GET | `/` | Health check |
-| GET | `/api/games` | Returns all games |
-| GET | `/api/games/{id}` | Returns a single game by ID |
-| POST | `/api/games` | Creates a new game |
-| PUT | `/api/games/{id}` | Updates an existing game |
-| DELETE | `/api/games/{id}` | Deletes a game |
+---
 
-## TODO: Add support for running with Docker (needs Linux)
+## TODO
+
+* Full Docker deployment support
+* Linux compatibility improvements

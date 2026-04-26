@@ -24,4 +24,5 @@ jobs:
 
       - name: Check Python imports (basic build check)
         run: |
+          export PYTHONPATH=backend
           python -c "import main; print('App imports successfully')"

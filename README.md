@@ -1,27 +1,77 @@
-# MPI_project
+# Games IMDB
 
-A C# ASP.NET Core Razor Pages frontend that connects to a Python FastAPI backend serving a games database.
+> A computer games rating platform designed to help users discover, evaluate, and rank video games through a centralized full-stack application.
 
 ---
+
+# 1. Description and Objectives
+
+Games IMDB is a full-stack web platform that allows users to browse, rate, add, edit, and manage computer games within a structured database environment.
+
+### Problem Solved:
+
+* Hierarchization and ranking of computer games
+* Centralized management of game information
+* Accessible platform for evaluating and organizing games
+
+### Objectives:
+
+* Provide a reliable games database
+* Allow CRUD operations for game management
+* Support user-friendly game discovery and comparison
+* Ensure stable backend/frontend integration
+
+### Target Audience:
+
+* Gamers
+* Children
+* Teenagers
+
+---
+
+# 2. Team and Roles
+
+| Student Name    | Main Role          | GitHub Username  |
+| --------------- | ------------------ | ---------------- |
+| Negru Cosmin    | Backend Developer  | @cnegru38        |
+| Răuțoiu Marco   | DevOps Engineer    | @RautoiuMarco    |
+| Mihăiță Ingrid  | QA Engineer        | @Ingrid2911      |
+| Popîrdă Eusebiu | Frontend Developer | @popardasebi3490 |
+
+---
+
+# 3. Architecture and Technologies
+
+* **Backend:** Python FastAPI
+* **Frontend:** C# ASP.NET Core Razor Pages
+* **Database:** MongoDB
+* **DevOps:** Docker & Docker Compose
+* **Testing:** Pytest + FastAPI TestClient
+
+---
+
+# 4. Local Setup (How to Run the Project)
 
 ## Prerequisites
 
 ### Running manually (Windows)
+
 Make sure the following are installed on your machine before proceeding:
 
-- [.NET 8.0 SDK](https://dotnet.microsoft.com/download)
-- [Python 3.x](https://www.python.org/downloads/)
-- ⚠️ [MongoDB Community Edition](https://www.mongodb.com/try/download/community)
-- [Visual Studio 2022](https://visualstudio.microsoft.com/)
-- Python dependencies (from the backend folder):
+* [.NET 8.0 SDK](https://dotnet.microsoft.com/download)
+* [Python 3.x](https://www.python.org/downloads/)
+* [MongoDB Community Edition](https://www.mongodb.com/try/download/community)
+* [Visual Studio 2022](https://visualstudio.microsoft.com/)
+* Python dependencies (from the backend folder):
 
-```bash
+```bash id="9qqvv8"
 pip install fastapi uvicorn pymongo python-dotenv
 ```
 
 ### Running with Docker (Linux)
-- [Docker Engine](https://docs.docker.com/engine/install/)
-- [Docker Compose plugin](https://docs.docker.com/compose/install/)
+
+* Docker Engine
+* Docker Compose plugin
 
 ---
 
@@ -31,40 +81,34 @@ pip install fastapi uvicorn pymongo python-dotenv
 
 #### Step 1 — Start MongoDB
 
-Open a terminal as Administrator and run:
-
-```bash
+```bash id="ytvr5d"
 net start MongoDB
 ```
 
 #### Step 2 — Seed the Database (first time only)
 
-Navigate to the Python backend folder and run:
-
-```bash
+```bash id="pz3w9g"
 python seed.py
 ```
 
-You should see `Succes!` printed in the terminal. This only needs to be done once — it populates the database with initial game data.
-
 #### Step 3 — Start the Python Backend
 
-In the same backend folder, run:
-
-```bash
+```bash id="lwm2b4"
 python -m uvicorn main:app --reload
 ```
 
-The API will be available at `http://localhost:8000`. You can verify it is running by visiting:
+### API Verification:
 
-- `http://localhost:8000` — welcome message
-- `http://localhost:8000/docs` — interactive Swagger UI
+* `http://localhost:8000`
+* `http://localhost:8000/docs`
 
 #### Step 4 — Run the C# Frontend
 
-Open `MPIFrontend.sln` in Visual Studio 2022 and press **F5** to build and launch the application. It will open automatically in your browser.
+Open `MPIFrontend.sln` in Visual Studio 2022 and press:
 
-> Make sure MongoDB and the Python backend are running **before** launching the frontend, otherwise the games list will be empty.
+```bash id="ckcr6c"
+F5
+```
 
 ---
 
@@ -72,90 +116,57 @@ Open `MPIFrontend.sln` in Visual Studio 2022 and press **F5** to build and launc
 
 #### Step 1 — Install Docker
 
-```bash
-sudo apt update
-sudo apt install -y ca-certificates curl gnupg
-sudo install -m 0755 -d /etc/apt/keyrings
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-sudo chmod a+r /etc/apt/keyrings/docker.gpg
+Follow Docker official installation instructions.
 
-echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+#### Step 2 — Start the full stack
 
-sudo apt update
-sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-```
-
-Optionally, allow running Docker without sudo:
-
-```bash
-sudo usermod -aG docker $USER
-newgrp docker
-```
-
-#### Step 2 — Start the stack
-
-From the root of the project (where `docker-compose.yml` lives):
-
-```bash
+```bash id="j3t3pr"
 docker compose up --build
 ```
 
-This starts all three services in the correct order: MongoDB → Backend → Frontend.
+### Services:
 
-- Frontend: `http://localhost:8080`
-- Backend: `http://localhost:8000`
+* Frontend: `http://localhost:8080`
+* Backend: `http://localhost:8000`
 
-#### Step 3 — Seed the Database (first time only)
+#### Step 3 — Seed the Database
 
-Once all containers are running, open a second terminal and run:
-
-```bash
+```bash id="t4gc1r"
 docker exec mpi_backend python seed.py
 ```
 
-You should see `Succes!` printed. Refresh the frontend and the games will appear.
+#### Stop services:
 
-#### Stopping the stack
-
-```bash
+```bash id="j8u38y"
 docker compose down
 ```
 
 ---
 
-## Troubleshooting
+# 5. Troubleshooting
 
-### Windows — Smart App Control blocking the executable
+### Windows
 
-On Windows 11, Smart App Control may block the locally built executable. To fix this:
+If Smart App Control blocks the executable:
 
-1. Search for **Smart App Control** in the Windows search bar
-2. Set it to **Off**
-3. Restart Visual Studio and press F5 again
+* Disable Smart App Control
+* Restart Visual Studio
 
 ---
 
-### Linux/Docker — MongoDB requires AVX support
+### Linux/Docker
 
-If MongoDB fails to start with a message about AVX support, your CPU does not support it. Use MongoDB 4.4 instead by changing the image in `docker-compose.yml`:
+### MongoDB AVX issue:
 
-```yaml
-mongodb:
-  image: mongo:4.4
+Use:
+
+```yaml id="2n59rn"
+image: mongo:4.4
 ```
-..and on this line, change "mongosh" to just "mongo":
 
-```yaml
-healthcheck:
-    test: ["CMD", "mongo", "--eval", "db.adminCommand('ping')"]
-```
----
+### Network resolution issues:
 
-### Linux/Docker — Containers can't reach each other
-
-If the backend logs show `Temporary failure in name resolution`, make sure all three services have the `networks` block in `docker-compose.yml` and that the `mpi_network` bridge network is defined at the bottom. Then run:
-
-```bash
+```bash id="ijwx04"
 docker compose down -v
 docker network prune -f
 docker compose up --build
@@ -163,60 +174,43 @@ docker compose up --build
 
 ---
 
-## Project Structure
+# 6. Project Structure
 
-```
+```plaintext id="eb5i6t"
 MPI_project/
 ├── .gitignore
 ├── README.md
-├── docker-compose.yml        # Setup for MongoDB, backend and frontend containers
+├── docker-compose.yml
 ├── backend/
-│   ├── Dockerfile            # Docker image for the Python backend
-│   ├── main.py               # FastAPI app; defines all API endpoints
-|   ├── pytest                # Empty test file
-|   ├── requirements.txt      # Contains all necessary Python libraries in order to run the backend
-│   ├── seed.py               # One-time script to populate the database with sample data
-│   └── test_main.py          # Automated tests for the API
+│   ├── Dockerfile
+│   ├── main.py
+│   ├── pytest
+│   ├── requirements.txt
+│   ├── seed.py
+│   └── test_main.py
 └── MPIFrontend/
     └── MPIFrontend/
-        ├── Dockerfile                # Docker image for the C# frontend
+        ├── Dockerfile
         ├── Models/
-        │   └── Game.cs               # C# model matching the API response
         ├── Pages/
-        │   ├── Shared/
-        │   │   └── _Layout.cshtml    # Shared navbar and footer layout
-        │   ├── Index.cshtml          # Home page — lists all games
-        │   ├── Index.cshtml.cs       # Fetches games list from GameService
-        │   ├── Details.cshtml        # Game details page with Edit and Delete buttons
-        │   ├── Details.cshtml.cs     # Fetches single game, handles delete
-        │   ├── AddGame.cshtml        # Form to add a new game
-        │   ├── AddGame.cshtml.cs     # Handles POST to create a new game
-        │   ├── EditGame.cshtml       # Form to edit an existing game, pre-filled
-        │   ├── EditGame.cshtml.cs    # Fetches game data, handles PUT update
-        │   ├── About.cshtml          # Project info and team roles
-        │   └── About.cshtml.cs
         ├── Services/
-        │   └── GameService.cs        # Handles all HTTP calls to the Python API
         ├── wwwroot/
-        │   ├── css/
-        │   │   └── site.css          # Styling
-        │   └── images/
-        │       └── imdb_logo.png     # Navbar logo
-        ├── appsettings.json          # Configuration including Python API base URL
-        └── Program.cs                # App entry point
+        ├── appsettings.json
+        └── Program.cs
 ```
 
 ---
 
-## API Endpoints
+# 7. API Endpoints
 
-The Python FastAPI backend exposes the following endpoints:
+| Method | URL               | Description                 |
+| ------ | ----------------- | --------------------------- |
+| GET    | `/`               | Health check                |
+| GET    | `/api/games`      | Returns all games           |
+| GET    | `/api/games/{id}` | Returns a single game by ID |
+| POST   | `/api/games`      | Creates a new game          |
+| PUT    | `/api/games/{id}` | Updates an existing game    |
+| DELETE | `/api/games/{id}` | Deletes a game              |
 
-| Method | URL | Description |
-|--------|-----|-------------|
-| GET | `/` | Health check |
-| GET | `/api/games` | Returns all games |
-| GET | `/api/games/{id}` | Returns a single game by ID |
-| POST | `/api/games` | Creates a new game |
-| PUT | `/api/games/{id}` | Updates an existing game |
-| DELETE | `/api/games/{id}` | Deletes a game |
+---
+
